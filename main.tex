@@ -4,7 +4,7 @@
 \usepackage{perpage} 	% Numeroter footnote par page
 \MakePerPage{footnote}
 \usetheme{Singapore}
-\title[Accord All Staff Meeting]{Towards a Portable All-scale Model for NWP}
+\title[Accord All Staff Meeting]{Towards a Portable Model for All-scale Predictions}
 
 \subtitle{Accord All Staff Meeting}
 
@@ -38,23 +38,66 @@
 \frame{\titlepage}
 \section{Dynamical Core - AROME and PMAP-FVM}
 
-\begin{frame}{AROME and FVM characteristics}
+\begin{frame}{AROME and FVM dynamical cores}
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+             . & AROME & FVM \\
+            \hline
+            Vertical coordinate & Mass-based & Height-based  \\
+            \hline
+            Discretization & Spectral Transform (ST) & Finite Volumes (FV)\\
+            \hline
+            Linearization & Constant Coefficients & Non-constant Coef. (NC) \\
+            \hline
+            Implicit solver & Direct & Krylov Methods \\
+            \hline 
+            Advection & Semi-Lagrangian (SL) & Eulerian (MPDATA)\\
+            \hline 
+        \end{tabular}
+    \end{center}
+
+    \begin{itemize}
+        \item Mass-based : hybrid terrain pressure following
+        \item Z-based : SLEVE - smooth level vertical coordinate
+    \end{itemize}
+
 \end{frame}
 
-\begin{frame}{Equations}
+\begin{frame}{From AROME to FVM}
+    Improving stability over steep orography
+    \begin{itemize}
+        \item Impliciting terms for orography $\rightarrow$ Non-constant Coefficient solver
+    \end{itemize}
+
+    AROME   
 \end{frame}
 
-\begin{frame}{Solvers}
+\begin{frame}{From AROME to FVM}
+    Improving numerical efficiency over new architectures 
+    \begin{itemize}
+        \item Evolving from Spectral Transform Direct Solver $\rightarrow$ Krylov Iterative Methods
+        \item GCR(k) Solver in FVM : good weak scalability compared to direct solver but global communcations at each step
+        \item Multigrid : reduced number of global communication thanks to reduction / expansion steps.
+    \end{itemize}
+
 \end{frame}
 
-\begin{frame}{Advection}
+\begin{frame}{Shadow zones of FVM}
+    Improving numerical efficiency over new architectures 
+    
 \end{frame}
 
-\begin{frame}{Future work}
+
+
+\begin{frame}{Semi-Lagrangian Advection versus MPDATA}
 \end{frame}
+
+
+
 
 %%%%%%%%%%
-\section{Realistic framework}
+\section{First Experiments on FVM}
 
 \begin{frame}{Idealized cases}
 \end{frame}
@@ -62,18 +105,25 @@
 \begin{frame}{No flow over the Alps}
 \end{frame}
 
-\begin{frame}{Physics - Dynamics coupling}
+%%%%%%%%%%%
+\section{Towards a Proof of Concept}
+
+\begin{frame}{Coupling PMAP-FVM with physical parametrizations}
+
+Translation of ICE3 Microphysics into GT4Py DSL
 \end{frame}
 
-\begin{frame}{Example : ICE3 Microphysics on GT4Py}
+\begin{frame}{Building on GT4Py : A portable python Domain System Language}
+
+
 \end{frame}
 
-\begin{frame}{GT4Py Domain System Language : A portability framework}
-\end{frame}
 
 %%%%%%%%%%%
 \section{Future work}
 \begin{frame}{Porting Physics on GT4Py}
+
+
 \end{frame}
 
 \begin{frame}{Solver}
