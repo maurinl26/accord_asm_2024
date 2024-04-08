@@ -2,13 +2,14 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{perpage} 	% Numeroter footnote par page
+\usepackage{fontawesome5}
 \MakePerPage{footnote}
 \usetheme{Singapore}
 \title[Accord All Staff Meeting]{Towards a Portable Model for All-scale Predictions}
 
 \subtitle{Accord All Staff Meeting}
 
-\author{Fabrice Voitus, Loïc Maurin}
+\author{Loïc Maurin, Fabrice Voitus}
 
 \institute[CNRM]{Centre National de Recherche Météorologique}
 
@@ -19,7 +20,7 @@
 }
 \AtBeginSection[]
 {
-  \begin{frame}{Sommaire}
+  \begin{frame}{Table of contents}
       \tableofcontents[currentsection]
   \end{frame}
 }
@@ -36,13 +37,38 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 \frame{\titlepage}
-\section{Dynamical Core - AROME and PMAP-FVM}
 
-\begin{frame}{AROME and FVM dynamical cores}
+\begin{frame}{Table of contents}
+    \tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{Building a reliable dynamical core for high resolutions NWP applications}
+
+    \begin{block}{Improving stability over steep orography}
+    \end{block}
+    \begin{block}{Maintaining scalability over highly parallel HPC-clusters}
+    \end{block}
+
+\end{frame}
+    
+\begin{frame}{AROME dynamical core}
+
+\end{frame}
+
+\begin{frame}{PMAP - FVM dynamical core}
+
+\end{frame}
+
+\begin{frame}{AROME and FVM dynamical cores - Summary}
     \begin{center}
+
+        \resizebox{\textwidth}{!}{
+
         \begin{tabular}{|c|c|c|}
             \hline
-             . & AROME & FVM \\
+              & AROME & FVM \\
             \hline
             Vertical coordinate & Mass-based & Height-based  \\
             \hline
@@ -55,42 +81,74 @@
             Advection & Semi-Lagrangian (SL) & Eulerian (MPDATA)\\
             \hline 
         \end{tabular}
+        }
     \end{center}
 
     \begin{itemize}
         \item Mass-based : hybrid terrain pressure following
-        \item Z-based : SLEVE - smooth level vertical coordinate
+        \item Height-based : SLEVE - smooth level vertical coordinate
     \end{itemize}
 
 \end{frame}
 
-\begin{frame}{From AROME to FVM}
-    Improving stability over steep orography
-    \begin{itemize}
-        \item Impliciting terms for orography $\rightarrow$ Non-constant Coefficient solver
-    \end{itemize}
+\section{From AROME to PMAP-FVM}
 
-    AROME   
+\begin{frame}{Transport scheme : Semi-Lagrangian versus MPDATA}
+
+    \begin{block}{Semi-Lagrangian Advection scheme}
+    \end{block}
 \end{frame}
 
-\begin{frame}{From AROME to FVM}
-    Improving numerical efficiency over new architectures 
-    \begin{itemize}
-        \item Evolving from Spectral Transform Direct Solver $\rightarrow$ Krylov Iterative Methods
-        \item GCR(k) Solver in FVM : good weak scalability compared to direct solver but global communcations at each step
-        \item Multigrid : reduced number of global communication thanks to reduction / expansion steps.
-    \end{itemize}
-
-\end{frame}
-
-\begin{frame}{Shadow zones of FVM}
-    Improving numerical efficiency over new architectures 
+\begin{frame}{Solver : improving numerical efficiency}
     
+    \begin{block}{Direct spectral solver (AROME)}
+        \textcolor{blue}{\faIcon{plus}} Exact solver (no iterations) \newline 
+        \textcolor{red}{\faIcon{minus}} Heavy global communications
+    \end{block}
+
+    \begin{block}{Krylov iterative solvers}
+        FVM : Gradient Conjugate Residuals of order k - GCR(k)  \newline
+        \textcolor{blue}{\faIcon{plus}} \newline 
+        \textcolor{red}{\faIcon{minus}} 
+    \end{block}
+
+    \begin{alertblock}{Multigrid preconditioner - \textit{to be investigated}}
+    \end{alertblock}
 \end{frame}
 
 
 
-\begin{frame}{Semi-Lagrangian Advection versus MPDATA}
+\begin{frame}{Solver : improving stability over steep orography}
+    \begin{block}{Impliciting terms for orography}
+        Need for a non-constant Coefficients Helmoltz solver
+    \end{block}
+
+    \begin{block}{AROME - Constant Coefficients in hydrostatic coordinate}
+        \begin{itemize}
+            \item hydrostatic pressure implicitely solved within $\eta$ coordinate
+            \item number of steps towards convergence are known in advance
+        \end{itemize}
+
+    \end{block}
+
+    \begin{block}{FVM - Non-constant Coefficients}
+        
+    \end{block}
+
+    \begin{alertblock}{Non-constant coefficient solver in hydrostatic coordinate}
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Summary}
+
+    \begin{block}{Integration of metric terms in Semi-Implicit solver}
+
+    \end{block} 
+
+    \begin{block}{Infusing PMAP with AROME's strengths}
+        mass-based coordinate for implicit NH preconditionning 
+    \end{block}
+    
 \end{frame}
 
 
@@ -99,22 +157,77 @@
 %%%%%%%%%%
 \section{First Experiments on FVM}
 
-\begin{frame}{Idealized cases}
+\begin{frame}{No flow over a gaussian orography}
+
+\end{frame}
+
+\begin{frame}{2D vertical flow over a steep orography}
+
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+              & $CFL$ & $Lipschitz$ & $\delta t$ & $\delta x$\\
+            \hline
+            $15^{\circ}$ &  &  &  & \\
+            \hline
+            $30^{\circ}$ &  &  &  & \\
+            \hline
+            $45^{\circ}$ &  &  &  & \\
+            \hline
+            $60^{\circ}$ &  &  &  & \\
+            \hline 
+            $75^{\circ}$ &  &  &  & \\
+            \hline 
+        \end{tabular}       
+    \end{center}
+
+    \begin{block}{Lipschitz' Deformation constraint} 
+        $L = max(\frac{\delta u}{\delta x}, \frac{\delta v}{\delta y}, \frac{\delta w}{\delta z})$
+    \end{block}
+
 \end{frame}
 
 \begin{frame}{No flow over the Alps}
 \end{frame}
 
 %%%%%%%%%%%
-\section{Towards a Proof of Concept}
+\section{Towards a Demonstrator}
 
-\begin{frame}{Coupling PMAP-FVM with physical parametrizations}
+\begin{frame}{Adding Physical processes to PMAP-FVM}
 
-Translation of ICE3 Microphysics into GT4Py DSL
+\begin{block}{Refactoring ICE3 Microphysics scheme into GT4Py}
+\end{block}
+
+\begin{block}{}
+\end{block}
+
+
+ecRad ported by ETHZ
 \end{frame}
 
-\begin{frame}{Building on GT4Py : A portable python Domain System Language}
+\begin{frame}{Building on GT4Py + DaCe}
 
+\begin{block}{GT4Py : GridTools for Python}
+    \begin{itemize}
+        \item Python Domain System Language (DSL) for HPC code generation
+        \item Portable accross CPU and GPU architectures (including AMD backends)
+        \item Python code : enhancing readability and Object Oriented Programming
+    \end{itemize}    
+\end{block}
+
+\begin{block}{DaCe : Data Centric Parallel Programming}
+    \begin{itemize}
+        \item Optimizing memory allocation for stencils
+    \end{itemize}
+\end{block}
+
+\begin{block}{DaCeML : Merging AI and Physics based models}
+    \begin{itemize}
+        \item Model inference using ONNX and integration with Pytorch
+        \item Automatic differenciation engine
+    \end{itemize}
+
+\end{block}
 
 \end{frame}
 
