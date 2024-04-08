@@ -1,0 +1,83 @@
+\documentclass{beamer}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{perpage} 	% Numeroter footnote par page
+\MakePerPage{footnote}
+\usetheme{Singapore}
+\title[Accord All Staff Meeting]{Towards a Portable All-scale Model for NWP}
+
+\subtitle{Accord All Staff Meeting}
+
+\author{Fabrice Voitus, Loïc Maurin}
+
+\institute[CNRM]{Centre National de Recherche Météorologique}
+
+\date{April 18th, 2024}
+\titlegraphic{
+    \includegraphics[height=1cm]{png/logos/logo_cnrm.jpg}
+    \includegraphics[height=1cm]{png/logos/logo-mf-blanc-fond-bleu-baseline-jpeg.jpg}
+}
+\AtBeginSection[]
+{
+  \begin{frame}{Sommaire}
+      \tableofcontents[currentsection]
+  \end{frame}
+}
+\renewcommand{\arraystretch}{1.5}
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+\setbeamercolor{footline}{fg=blue}
+\setbeamerfont{footline}{series=\bfseries}
+\setbeamertemplate{caption}[numbered]
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\frame{\titlepage}
+\section{Dynamical Core - AROME and PMAP-FVM}
+
+\begin{frame}{AROME and FVM characteristics}
+\end{frame}
+
+\begin{frame}{Equations}
+\end{frame}
+
+\begin{frame}{Solvers}
+\end{frame}
+
+\begin{frame}{Advection}
+\end{frame}
+
+\begin{frame}{Future work}
+\end{frame}
+
+%%%%%%%%%%
+\section{Realistic framework}
+
+\begin{frame}{Idealized cases}
+\end{frame}
+
+\begin{frame}{No flow over the Alps}
+\end{frame}
+
+\begin{frame}{Physics - Dynamics coupling}
+\end{frame}
+
+\begin{frame}{Example : ICE3 Microphysics on GT4Py}
+\end{frame}
+
+\begin{frame}{GT4Py Domain System Language : A portability framework}
+\end{frame}
+
+%%%%%%%%%%%
+\section{Future work}
+\begin{frame}{Porting Physics on GT4Py}
+\end{frame}
+
+\begin{frame}{Solver}
+\end{frame}
+
+
+\end{document}
