@@ -1,8 +1,12 @@
-\documentclass{beamer}
+\documentclass[10pt]{beamer}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{perpage} 	% Numeroter footnote par page
 \usepackage{fontawesome5}
+\usepackage{wrapfig}
+\usepackage{adjustbox}
+
+
 \MakePerPage{footnote}
 \usetheme{Singapore}
 \title[Accord All Staff Meeting]{Towards a Portable Model for All-scale Predictions}
@@ -18,12 +22,12 @@
     \includegraphics[height=1cm]{png/logos/logo_cnrm.jpg}
     \includegraphics[height=1cm]{png/logos/logo-mf-blanc-fond-bleu-baseline-jpeg.jpg}
 }
-\AtBeginSection[]
-{
-  \begin{frame}{Table of contents}
-      \tableofcontents[currentsection]
-  \end{frame}
-}
+% \AtBeginSection[]
+% {
+%   \begin{frame}{Table of contents}
+%       \tableofcontents[currentsection]
+%   \end{frame}
+% }
 \renewcommand{\arraystretch}{1.5}
 \addtobeamertemplate{navigation symbols}{}{%
     \usebeamerfont{footline}%
@@ -43,14 +47,18 @@
     \tableofcontents
 \end{frame}
 
-\section{Introduction}
+\section{Comparison of AROME and PMAP-FVM}
 %%%%%%%%%%%%%
 \begin{frame}{A dynamical core for very-high resolution NWP applications}
 
-    \begin{block}{Objectives}
+    \begin{block}{Objectives :}
+        \vspace{0.5cm}
         \begin{itemize}
-            \item[\faIcon{mountain}] Improving stability over steep orography
-            \item[\faIcon{laptop-code}] Maintaining scalability over massively parallel HPC-clusters
+            \item[\faIcon{mountain}] Allowing stable NWP simulations over steep orography
+        \end{itemize}
+        \vspace{1cm}
+        \begin{itemize}
+            \item[\faIcon{laptop-code}] Ensuring scalability over heterogeneous and highly parallel  HPC-clusters
         \end{itemize}
     \end{block}
 
@@ -58,6 +66,31 @@
 
 \begin{frame}{Current status of AROME perfomances}
 
+\end{frame}
+
+\begin{frame}{PMAP - FVM dynamical core}
+    \begin{block}{Finite Volume Module (FVM)}
+        \begin{itemize}
+            \item Eulerian non-oscillatory flux-form advection : MPDATA
+            \item 2 time levels semi-implicit integration : GCR(k)\newline\tiny \textit{(implicit treatment of acoustic, 
+            buoyant modes and metric terms for orography)}
+            \normalsize \item Height-based terrain-following coordinate
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{MPDATA -  \scriptsize \textit{Multi Dimensional Positive Definite Advection Transport Algorithm}}
+        \begin{itemize}
+            \item Conservative transport scheme
+            \item Conditional stability with $CFL < 0.5$ (implies small time steps)
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Semi-Implicit solver}
+        \begin{itemize}
+            \item Preconditionned iterative GCR(k) method
+        \end{itemize}
+
+    \end{block}
 \end{frame}
 
 \begin{frame}{AROME and FVM dynamical cores - Summary}
@@ -82,53 +115,43 @@
     \end{center}
 \end{frame}
 
-\begin{frame}{PMAP - FVM dynamical core}
-
-    \begin{block}{Finite Volume Module (FVM)}
-        \begin{itemize}
-            \item Eulerian non-oscillatory flux-form advection : MPDATA
-            \item 2 time levels semi-implicit integration \newline\tiny \textit{(implicit treatment of acoustic, 
-            buoyant modes and metric terms for orography)}
-            \normalsize \item Height-based terrain-following coordinate
-        \end{itemize}
-    \end{block}
-
-    \begin{block}{MPDATA -  \scriptsize \textit{Multi Dimensional Positive Definite Advection Transport Algorithm}}
-       
-        \begin{itemize}
-            \item Conservative transport scheme
-            \item Conditional stability with $CFL < 0.5$ (implies small time steps)
-        \end{itemize}
-        
-    \end{block}
-
-\end{frame}
-
-
 % \section{Components}
 \begin{frame}{Vertical coordinate}
     \begin{block}{Mass-based}
         \begin{itemize}
-            \item[\textcolor{blue}{\faIcon{plus}}] \small Hydrostatic part of the flow given by the coordinate
-            \item[\textcolor{blue}{\faIcon{plus}}] \small  Reduced need for a top absorbing layer ($z \rightarrow \infty$) 
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Hydrostatic part of the flow given by the coordinate (trivial transition from EE to HPE)
+            \item[\textcolor{blue}{\faIcon{plus}}] \small In theory, no need for a top absorbing layer ($z_{top} \rightarrow \infty$) 
             \item[\textcolor{red}{\faIcon{minus}}] \small Time dependency of metric terms ($\pi_s = \pi_s(x, y, t)$)
-            \item[\textcolor{red}{\faIcon{minus}}] \small Integral vertical operators
+            \item[\textcolor{red}{\faIcon{minus}}] \small Need for integral vertical operators
         \end{itemize}
     \end{block}
 
     \begin{block}{Height-based}
         \begin{itemize}
-            \item[\textcolor{blue}{\faIcon{plus}}] \small Metric terms (orography) independant for the time
-            \item[\textcolor{red}{\faIcon{minus}}] \small Top absorbing layer required 
-            \item[\textcolor{red}{\faIcon{minus}}] \small Dependency to a prescribed hydrostatic ambient state
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Time-independant Metric terms (orography)
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Only derivative operators involved 
+            \item[\textcolor{red}{\faIcon{minus}}] \small Need for a top absorbing layer ($z_{top} = Cst$) 
+            \item[\textcolor{red}{\faIcon{minus}}] \small Need to prescribe an hydrostatically balanced ambient state
         \end{itemize}
     \end{block}
 \end{frame}
 
-\begin{frame}{Solver : improving stability over steep orography}
+\begin{frame}{Spectral Transform vs. Finite Volumes}
+    \begin{block}{Spectral Transform}
+        \begin{itemize}
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Exact derivative operators
+        \end{itemize}
+    \end{block}
 
-    \textcolor{red}{Inclusion of metric terms for orography in the implicit solver}
-    
+    \begin{block}{Finite volumes}
+        \begin{itemize}
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Conservative Eulerian model
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Solver : improving stability over steep orography}  
+    \vspace{-0.2cm}  
     \begin{block}{AROME - Constant Coefficients}
 
         \begin{itemize}
@@ -141,19 +164,23 @@
             \end{itemize}
             \item \textcolor{blue}{Iterative solver}
             \begin{itemize}
-                \item[\textcolor{blue}{\faIcon{plus}}] \small Fixed number of iterations for the implicit solver
-                \item[\textcolor{blue}{\faIcon{plus}}] \small Near-constant weak scalability while increasing the resolution
+                \item[\textcolor{blue}{\faIcon{plus}}] \small Controlled convergence rate due to vertical separability : the number of inner-iterations can be fixed in advance
+                % \item[\textcolor{blue}{\faIcon{plus}}] \small Near-constant weak scalability while increasing the resolution
             \end{itemize}
         \end{itemize}
-        
+
+    $\rightarrow$ \textcolor{red}{Stability issue at very steep slopes : no metric terms in implicit part}
     \end{block}
+
+    \vspace{0.25cm}
 
     \begin{block}{FVM - Non-constant Coefficients - Iterative solver}
         \begin{itemize}
             \item[\textcolor{blue}{\faIcon{plus}}] \small Stable on steep slopes (up to 85°) 
-            \item[\textcolor{red}{\faIcon{minus}}] \small Convergence rate depends on the prescribed ambient state
+            \item[\textcolor{red}{\faIcon{minus}}] \small Convergence cannot be monitored due to a non-separable implicit problem
         \end{itemize}
     \end{block}
+
 \end{frame}
 
 \begin{frame}{Zängl experiment with FVM}
@@ -172,23 +199,24 @@
 
 \begin{frame}{Solver : improving numerical efficiency}
 
+    \vspace{-0.5cm}
+
     \begin{columns}
         \column{0.5\textwidth}
         \begin{block}{Direct spectral solver}
             \begin{itemize}
-                \item[\textcolor{blue}{\faIcon{plus}}] Exact solver (no iterations)
-                \item[\textcolor{red}{\faIcon{minus}}] Global communications for Spectral Transform 
+                \item[\textcolor{blue}{\faIcon{plus}}] \small Exact solver
+                \item[\textcolor{red}{\faIcon{minus}}] Poor weak scalability due to global communications for the Spectral Transform 
             \end{itemize}
         \end{block}
     
         \begin{block}{Iterative Krylov solver}
             \begin{itemize}
-                \item[\textcolor{blue}{\faIcon{plus}}] Near constant weak scalability
-                \item[\textcolor{red}{\faIcon{minus}}] Convergence rate
+                \item[\textcolor{blue}{\faIcon{plus}}] \small Near-constant weak scalability while increasing the resolution                
+                \item[\textcolor{red}{\faIcon{minus}}] \small Convergence rate depends on the prescribed ambient state
+                \item[\textcolor{red}{\faIcon{minus}}] \small Global communication due to dot-product
             \end{itemize}
         \end{block}
-
-        % \textcolor{red}{Investigating a Multigrid preconditioner}
 
         \column{0.5\textwidth}
         \begin{figure}
@@ -200,6 +228,9 @@
         \end{figure}
     \end{columns}
 
+    \textcolor{red}{$\rightarrow$ Multigrid preconditioner}
+
+    \vspace{0.5cm}
     \tiny Degrauwe D, Voitus F, Termonia Piet. A non-spectral Helmholtz solver for numerical weather prediction models with a mass-based vertical coordinate. QJR Meteorol. Soc. 2020; 1-15. 
 
 \end{frame}
@@ -209,34 +240,34 @@
     
     \begin{block}{MPDATA}
         \begin{itemize}
-            \item[\textcolor{blue}{\faIcon{plus}}] Conservative scheme
-            \item[\textcolor{blue}{\faIcon{plus}}] Non-oscillatory 
-            \item[\textcolor{red}{\faIcon{minus}}] Conditionnally stable ($CFL < 0.5$)
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Conservative scheme
+            \item[\textcolor{red}{\faIcon{minus}}] Conditionnally stable due to advective CFL %($CFL < 0.5$)
+            \item[\textcolor{red}{\faIcon{minus}}] Small time steps due to CFL and aspect ratio %($\Delta t < 1s$  for $\Delta z_{min} = 10 m$)
         \end{itemize}
     \end{block}
 
     \begin{block}{Pointwise Semi-Lagrangian scheme}
         \begin{itemize} 
-            \item[\textcolor{blue}{\faIcon{plus}}] Unconditionnally stable
-            \item[\textcolor{blue}{\faIcon{plus}}] Performs well with CFL between 4 and 10
-            \item[\textcolor{red}{\faIcon{minus}}] Non conservative under strong deformations
+            \item[\textcolor{blue}{\faIcon{plus}}] \small Unconditionnally stable
+            \item[\textcolor{blue}{\faIcon{plus}}] Performs well with CFL between 4 and 10 : allowing greater timesteps
+            \item[\textcolor{red}{\faIcon{minus}}] Non conservative under strong deformations due to Lipschitz convergence constraint : %\footnotesize $L = max(\delta t \lvert \frac{\partial u}{\partial x} \rvert, \delta t \lvert \frac{\partial v}{\partial y} \rvert, \delta t \lvert \frac{\partial w}{\partial z} \rvert)$
         \end{itemize}
     \end{block}
+
+    \textcolor{red}{\rightarrow Expecting MPDATA performances on GPU to compensate small timesteps}
+  
     
 \end{frame}
 
-\begin{frame}{Transport scheme : Semi-Lagrangian vs. Eulerian MPDATA}
-    Semi-Lagrangian Advection
-    \begin{figure}
-        \centering
-        \includegraphics[scale=0.5]{png/blossey_sl_005_unfiltered.pdf}
-        \caption{Durran and Blossey advection test with Semi-Lagrangian Algorithm : $CFL_{max} = 4$}
-        \label{fig:blossey}
-    \end{figure}
-\end{frame}
-
-
-
+% \begin{frame}{Transport scheme : Semi-Lagrangian vs. Eulerian MPDATA}
+%     Semi-Lagrangian Advection
+%     \begin{figure}
+%         \centering
+%         \includegraphics[scale=0.5]{png/blossey_sl_005_unfiltered.pdf}
+%         \caption{Durran and Blossey advection test with Semi-Lagrangian Algorithm : $CFL_{max} = 4$}
+%         \label{fig:blossey}
+%     \end{figure}
+% \end{frame}
 
 
 %%%%%%%%%%
@@ -296,73 +327,118 @@
 \section{Towards a Demonstrator}
 
 \begin{frame}{Physical processes for PMAP-FVM}
+    \begin{columns}
+        \column{0.7\textwidth}
+        
+        \begin{block}{Porting physical processes on GT4Py}
+            \begin{itemize}
+                \item \small Integration of GT4Py physics package to PMAP
+                \begin{itemize}
+                    \item[\faCloudShowersHeavy] \small ICE3 - Microphysics + Adjustments
+                    \item[\faIcon{radiation}] ecRad (translated by ETHZ)
+                    \item[\faWind] Turbulence scheme from COSMO
+                \end{itemize}
+                \item \small Translation of packages (DEODE phase 2)
+                \begin{itemize}
+                    \item \small SURFEX : translation of options used operationnally with AROME
+                    \item Shallow Convection
+                \end{itemize}
+            \end{itemize}
+        \end{block}
 
-\begin{block}{Coupling ICE3 Microphysics scheme to FVM}
-    \begin{itemize}
-        \item \small Translation of ICE3 to GT4Py
-        \item Coupling of ICE3 and FVM with respect to small time steps options (Méso-NH)
-    \end{itemize}
-\end{block}
+        % \begin{block}{Example : ICE3 Microphysics in GT4Py}
+        %     \begin{itemize}
+        %         \item \small Translation of ICE3 to GT4Py
+        %         \item Coupling of ICE3 and FVM with respect to small time steps options (Méso-NH)
+        %     \end{itemize}
+        % \end{block}
 
-% \begin{block}{Coupling physics schemes}
-%     \begin{itemize}
-%         \item \small Radiations scheme ecRad translated by ETHZ
-%         \item Surface scheme
-%     \end{itemize}
-% \end{block}
-
+        \column{0.3\textwidth}
+        \begin{figure}
+            \centering
+            \includegraphics[scale=0.3]{png/physics_arome.png}
+            \caption{\footnotesize Physics parametrizations}
+            \label{fig:appel_arome}
+        \end{figure}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Building on GT4Py + DaCe}
 
-\begin{block}{GT4Py : GridTools for Python}
-    \begin{itemize}
-        \item \small Domain System Language (DSL) for HPC code generation
-        \item \small Portable accross CPU and GPU architectures
-        \item[\faPython] \small Python code : readability and Object Oriented Programming
-    \end{itemize}    
-\end{block}
+    % \begin{wrapfigure}{r}{0.3\textwidth}
+    %     \centering
+    %     \includegraphics[width=0.2\textwidth]{png/logos/logo_gt4py.png}
+    % \end{wrapfigure}
 
-\begin{block}{DaCe : Data Centric Parallel Programming}
-    \begin{itemize}
-        \item \small Optimizing memory allocation for stencils
-        \item \small DaCeML : Merging AI and Physics based models
-        \begin{itemize}
-            \item \small Model inference using ONNX and integration with Pytorch
-            \item \small Automatic differenciation engine
-        \end{itemize}
-    \end{itemize}
-\end{block}
+    \begin{columns}[t]
+        \begin{column}{0.3\textwidth}
+            \adjincludegraphics[width=\linewidth, valign=t, halign=t]{png/logos/logo_gt4py.png}
+        \end{column}
+
+       \begin{column}{0.7\textwidth}
+                \small Python Domain Specific Language (DSL) for Weather and Climate HPC code generation        
+        \end{column}
+    \end{columns}
+
+    \vspace{0.2cm}
+
+        \begin{block}{GT4Py : GridTools for Python}
+            \begin{itemize}
+                \item[\faPlus] \small Portable accross CPU and GPU (Nvidia, AMD) architectures
+                \item[\faPlus] \small Modularization of the code (dycore, physical packages) and OOP (Object Oriented Programming)
+                \item[\faPlus] \small Used by ICON (Exclaim), COSMO, and NOAA (FV3GFS) 
+            \end{itemize}    
+        \end{block}
+
+    \begin{columns}[t]
+        
+    
+        \begin{column}{0.7\textwidth}
+            \begin{block}{\small DaCe : Data Centric Parallel Programming}
+                \begin{itemize}
+                    \item \small Optimizing memory allocation for stencils
+                    \item \small DaCeML : Merging AI and Physics based models
+                    \begin{itemize}
+                        \item \small Model inference using ONNX 
+                        \item \small Bindings with Pytorch
+                        \item \small Automatic differenciation engine
+                    \end{itemize}
+                \end{itemize}
+            \end{block}        
+        \end{column}
+
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+            \adjincludegraphics[width=\textwidth, valign=t]{png/gt4py_example.png}
+            \caption{Laplacian operator in gt4py}
+            \label{fig:code_sample}
+            \end{figure}
+    \end{column}
+    \end{columns}
 \end{frame}
 
 
 %%%%%%%%%%%
 \section{Future work}
-\begin{frame}{Building a demonstrator with PMAP}
-    \textcolor{red}{Development of a realistic model for Limited Area and LES}
 
-    \begin{block}{Physics packages on GT4Py}
-        \begin{itemize}
-            \item Integration of GT4Py physics package to PMAP
+
+\begin{frame}{Conclusion}
+        \textcolor{red}{Development of a model for Limited Area and LES realistic simulations}
+        \begin{block}{Porting Physics packages to GT4Py}
             \begin{itemize}
-                \item[\faCloudShowersHeavy] \small ICE3 - Microphysics + Adjustments
-                \item[\faIcon{radiation}] ecRad (translated by ETHZ)
-                \item[\faWind] Turbulence scheme from COSMO
+                \item Test and integration of ICE3 and radiations with PMAP
+                \item Development of GT4Py packages for shallow convection, and surface schemes 
             \end{itemize}
-            \item Translation of packages 
+        \end{block}
+    
+        \begin{block}{Running PMAP on a realistic AROME domain}
             \begin{itemize}
-                \item \small SURFEX
-                \item Shallow Convection
+                \item Testing PMAP on Alps with SRTM elevation Data
             \end{itemize}
-        \end{itemize}
-    \end{block}
-
-    % \begin{block}{Towards realistic runs}
-    %     \begin{itemize}
-    %         \item Investigation of
-    %     \end{itemize}
-    % \end{block}
-
+        \end{block}
+    
+        \begin{block}{}
+        \end{block}
 \end{frame}
 
 \end{document}
